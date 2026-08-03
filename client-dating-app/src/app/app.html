@@ -1,1 +1,7 @@
-<h2 class="text-red-800">{{title()}}</h2>
+<h2 class="text-red-800 text-3xl">{{title()}}</h2>
+<ul>
+  @for (member of members(); track member.id) {
+    <li>{{member.name}} - {{member.email}}</li>
+  }
+</ul>
+<button class="btn btn-primary">Button</button>
