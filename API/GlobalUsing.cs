@@ -1,0 +1,9 @@
+global using API.Data;
+global using Microsoft.AspNetCore.Authorization;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.EntityFrameworkCore;
+global using System.Security.Cryptography;
+global using System.Text;
+global using API.DTOs;
+global using API.Entities;
+global using API.Interfaces;
