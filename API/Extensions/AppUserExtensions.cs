@@ -7,7 +7,7 @@ public static class AppUserExtensions
         return new UserDto
         {
             Email = user.Email,
-            DisplayName = user.DisplayName,
+            Name = user.DisplayName,
             Id = user.Id,
             Token = tokenService.CreateToken(user)
         };
