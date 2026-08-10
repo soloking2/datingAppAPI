@@ -1,0 +1,5 @@
+<form class="flex items-center gap-3" #loginForm="ngForm" (ngSubmit)="login()">
+<input type="text" placeholder="Email" class="input" id="email" name="email" [(ngModel)]="creds.email"/>
+<input type="password" placeholder="Password" class="input" id="password" name="password" [(ngModel)]="creds.password"/>
+<button class="btn">Login</button>
+</form>
