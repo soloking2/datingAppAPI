@@ -1,5 +1,4 @@
 <dating-nav />
-<div class="flex flex-col mt-30">
-
-  <dating-home />
+<div [class]="{ 'mt-24': !(router.url === '/'), container: !(router.url === '/') }">
+  <router-outlet />
 </div>

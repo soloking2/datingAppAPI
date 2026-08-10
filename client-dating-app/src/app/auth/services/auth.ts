@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service, signal } from '@angular/core';
-import { catchError, EMPTY, tap } from 'rxjs';
+import { catchError, tap } from 'rxjs';
 import { User } from '../../core/interfaces/User';
 import { LocalStorage } from '../../core/services/local-storage';
 import { UserRegister } from '../../core/interfaces/IRegister';
@@ -20,7 +20,7 @@ export class Auth {
       }),
       catchError((error) => {
         console.error('Login failed', error);
-        return EMPTY;
+        throw error;
       }),
     );
   }
@@ -28,7 +28,7 @@ export class Auth {
   public register(payload: UserRegister) {
     return this.http.post<User>(`${this.baseUrl}/register`, payload).pipe(
       tap((user) => {
-        this.setCurrentUser(user)
+        this.setCurrentUser(user);
       }),
       catchError((error) => {
         throw error;
