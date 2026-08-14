@@ -1,7 +1,7 @@
 <div class="dropdown dropdown-end">
   <div class="flex items-center text-white text-xl gap-3 cursor-pointer" tabindex="0" role="button">
     @if (user()?.imageUrl) {
-      <img [src]="user()?.imageUrl" alt="User avatar" />
+      <img [src]="user()?.imageUrl" alt="User avatar" class="w-10 h-10 rounded-full"/>
     } @else {
       <svg
         xmlns="http://www.w3.org/2000/svg"

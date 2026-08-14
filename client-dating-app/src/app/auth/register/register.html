@@ -27,6 +27,13 @@
         <button type="reset" class="btn" (click)="cancel()">Cancel</button>
         <button type="submit" class="btn btn-primary" [disabled]="isRegistering()">Submit</button>
       </div>
+      @if (validationErrors().length > 0) {
+        <ul class="card text-red-500 bg-base-100 text-xs">
+          @for (error of validationErrors(); track $index) {
+            <li class="list-decimal">{{ error }}</li>
+          }
+        </ul>
+      }
     </form>
   </div>
 </div>

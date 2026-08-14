@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace API.Entities
 {
@@ -10,8 +11,14 @@ namespace API.Entities
         [MaxLength(100)]
         public required string Email { get; set; }
 
+        public string? ImageUrl { get; set; }
+
         public required byte[] PasswordHash { get; set; }
         public required byte[] PasswordSalt { get; set; }
         
+        //Navigation property
+        [JsonIgnore]
+        public Member Member { get; set; } = null!;
+
     }
 }

@@ -1,4 +1,4 @@
 <dating-nav />
-<div [class]="{ 'mt-24': !(router.url === '/'), container: !(router.url === '/') }">
+<div [class.mt-24]="router.url !== ''">
   <router-outlet />
 </div>

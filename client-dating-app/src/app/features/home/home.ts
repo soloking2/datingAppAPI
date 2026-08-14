@@ -15,6 +15,7 @@ export class Home {
   private readonly toastService = inject(ToastService);
   protected registerMode = signal(false);
   protected isRegistering = signal(false);
+  protected validationErrors = signal<string[]>([]);
 
   handleRegisterMode() {
     this.registerMode.set(true);
@@ -25,6 +26,7 @@ export class Home {
   }
 
   handleRegister(registerUser: UserRegister) {
+    this.validationErrors.set([]);
     this.authService.register(registerUser).subscribe({
       next: (response) => {
         if (response) {
@@ -34,8 +36,7 @@ export class Home {
         }
       },
       error: (error) => {
-        console.log(error);
-        this.toastService.error(error.error)
+        this.validationErrors.set(error);
         this.isRegistering.set(false);
       },
     });

@@ -1,0 +1,17 @@
+@let mem = member();
+<div
+  class="card relative cursor-pointer transition-all duration-300 ease-in-out transform hover:-translate-y-2"
+  [routerLink]="['/member-list', mem.id]"
+>
+  <img [src]="mem.imageUrl || ''" alt="{{ mem.displayName }}" class="rounded-lg" />
+  <div
+    class="card-actions z-50 absolute bottom-0 w-full px-3 py-1 rounded-b-lg bg-linear-to-t from-black via-black/75 to-black/0"
+  >
+    <div class="text-white flex flex-col">
+      <span class="font-semibold"
+        >{{ mem.displayName | titlecase }}, {{ mem.dateOfBirth | ageOld }}</span
+      >
+      <span class="text-sm">{{ mem.city }}</span>
+    </div>
+  </div>
+</div>

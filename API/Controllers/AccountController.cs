@@ -19,6 +19,7 @@ public class AccountController(ApiDbContext dbContext, ITokenService tokenServic
    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes((registrationDto.Password))),
    PasswordSalt = hmac.Key
   };
+ 
   await _dbContext.Users.AddAsync(user);
   await _dbContext.SaveChangesAsync();
   return Ok(user.ToDto(tokenService));

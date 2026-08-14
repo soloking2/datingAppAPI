@@ -4,12 +4,13 @@ import { catchError, tap } from 'rxjs';
 import { User } from '../../core/interfaces/User';
 import { LocalStorage } from '../../core/services/local-storage';
 import { UserRegister } from '../../core/interfaces/IRegister';
+import { environment } from '../../../environments/environment';
 
 @Service()
 export class Auth {
   private readonly http = inject(HttpClient);
   private readonly storageService = inject(LocalStorage);
-  private readonly baseUrl = 'https://localhost:5001/api/account';
+  private readonly baseUrl = `${environment.baseUrl}/account`;
 
   public currentUser = signal<User | null>(this.storageService.getItem<User>('user'));
 
@@ -29,9 +30,6 @@ export class Auth {
     return this.http.post<User>(`${this.baseUrl}/register`, payload).pipe(
       tap((user) => {
         this.setCurrentUser(user);
-      }),
-      catchError((error) => {
-        throw error;
       }),
     );
   }

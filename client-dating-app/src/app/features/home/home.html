@@ -27,6 +27,7 @@
       (registerOutput)="handleRegister($event)"
       [(isRegistering)]="isRegistering"
       (cancelOutput)="handleCloseRegisterMode($event)"
+      [validationErrors]="validationErrors()"
     />
   </div>
 }
