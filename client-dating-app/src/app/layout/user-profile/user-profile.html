@@ -19,7 +19,7 @@
     <span class="card-title">{{ user()?.name | titlecase }}</span>
   </div>
   <ul class="dropdown-content dropdown-end menu bg-base-100 rounded-box z-1 w-52">
-    <li><a>Edit Profile</a></li>
+    <li><a routerLink="/member-list/{{user()?.id}}/profile">Edit Profile</a></li>
     <li><button (click)="logout()">Logout</button></li>
   </ul>
 </div>

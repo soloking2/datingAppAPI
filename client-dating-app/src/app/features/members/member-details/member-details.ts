@@ -12,6 +12,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AgeOldPipe } from '../../../core/pipe/age-old-pipe';
 import { IMember } from '../../../core/interfaces/member';
 import { filter } from 'rxjs';
+import { Auth } from '../../../auth/services/auth';
 
 @Component({
   selector: 'dating-member-details',
@@ -20,15 +21,19 @@ import { filter } from 'rxjs';
   styleUrl: './member-details.css',
 })
 export class MemberDetails implements OnInit {
-  private readonly memberService = inject(MemberService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly authService = inject(Auth);
   private readonly paramMap = toSignal(this.route.paramMap);
-  private readonly userId = computed(() => this.paramMap()?.get('id') as string);
   private readonly destroy$ = inject(DestroyRef);
+  protected readonly memberService = inject(MemberService);
 
   protected member = signal<IMember | null>(null);
   protected title = signal<string | undefined>('');
+  protected isCurrentUser = computed(() => {
+    return this.authService.currentUser()?.id === this.paramMap()?.get('id')
+  });
+  protected editMode = computed(() => this.memberService.editProfile());
 
   ngOnInit(): void {
     this.title.set(this.route.firstChild?.snapshot?.title);
