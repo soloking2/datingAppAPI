@@ -2,7 +2,6 @@ import { Component, inject, signal } from '@angular/core';
 import { Register } from '../../auth/register/register';
 import { Auth } from '../../auth/services/auth';
 import { UserRegister } from '../../core/interfaces/IRegister';
-import { ToastService } from '../../core/services/toast-service';
 
 @Component({
   selector: 'dating-home',
@@ -12,7 +11,6 @@ import { ToastService } from '../../core/services/toast-service';
 })
 export class Home {
   private readonly authService = inject(Auth);
-  private readonly toastService = inject(ToastService);
   protected registerMode = signal(false);
   protected isRegistering = signal(false);
   protected validationErrors = signal<string[]>([]);

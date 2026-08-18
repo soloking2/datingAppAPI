@@ -17,8 +17,10 @@ public class AccountController(ApiDbContext dbContext, ITokenService tokenServic
    Email = registrationDto.Email,
    DisplayName = registrationDto.DisplayName,
    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes((registrationDto.Password))),
-   PasswordSalt = hmac.Key
+   PasswordSalt = hmac.Key,
+   ImageUrl = registrationDto.ImageUrl
   };
+  
  
   await _dbContext.Users.AddAsync(user);
   await _dbContext.SaveChangesAsync();
@@ -43,8 +45,22 @@ public class AccountController(ApiDbContext dbContext, ITokenService tokenServic
 
  }
 
+ [HttpGet("users")]
+ public async Task<ActionResult> GetUsers()
+ {
+  var users = await _dbContext.Users.Select(user => new
+  {
+   DisplayName = user.DisplayName,
+   Id = user.Id,
+   ImageUrl = user.ImageUrl
+  }).ToListAsync();
+  return Ok(users);
+ }
+
  private async Task<bool> EmailExists(string email)
  {
   return await _dbContext.Users.AnyAsync(user => user.Email.ToLower() == email.ToLower());
  }
+ 
+ 
 }

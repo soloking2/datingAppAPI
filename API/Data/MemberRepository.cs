@@ -27,4 +27,11 @@ public class MemberRepository(ApiDbContext dbContext) : IMemberRepository
         return await dbContext.Members.Where(m => m.Id == memberId)
             .SelectMany(m => m.Photos).ToListAsync();
     }
+
+    public async Task<Member?> GetMemberForUpdate(string id)
+    {
+        return await dbContext.Members.Include(member => member.User)
+            .Include(member => member.Photos)
+            .SingleOrDefaultAsync(x => x.Id == id);
+    }
 }

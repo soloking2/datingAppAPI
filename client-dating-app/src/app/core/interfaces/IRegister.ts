@@ -1,5 +1,15 @@
+import { FormControl } from "@angular/forms";
+
 export interface UserRegister {
-  displayName: string;
-  email: string;
-  password: string;
+  displayName: FormControl<string | null>;
+  email: FormControl<string | null>;
+  password: FormControl<string | null>;
+  confirmPassword: FormControl<string | null>;
+}
+
+export interface ProfileForm {
+  gender: FormControl<string | null>;
+  city: FormControl<string | null>;
+  dateOfBirth: FormControl<string | null>;
+  country: FormControl<string | null>;
 }

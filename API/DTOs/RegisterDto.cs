@@ -14,5 +14,7 @@ public class RegisterDto
     [MinLength(6, ErrorMessage = "Password must have at least 6 characters")]
     public string Password { get; set; } = "";
 
+    public string? ImageUrl { get; set; }
+
 }
     

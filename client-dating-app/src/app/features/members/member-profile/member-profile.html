@@ -54,7 +54,9 @@
           />
         </label>
         <div class="flex justify-end">
-          <button class="btn btn-success" type="submit">
+          <button class="btn btn-success" type="submit"
+          [disabled]="!editForm.dirty"
+          >
             Submit
           </button>
         </div>

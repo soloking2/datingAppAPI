@@ -10,7 +10,6 @@ import {
 } from '@angular/router';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AgeOldPipe } from '../../../core/pipe/age-old-pipe';
-import { IMember } from '../../../core/interfaces/member';
 import { filter } from 'rxjs';
 import { Auth } from '../../../auth/services/auth';
 
@@ -28,7 +27,7 @@ export class MemberDetails implements OnInit {
   private readonly destroy$ = inject(DestroyRef);
   protected readonly memberService = inject(MemberService);
 
-  protected member = signal<IMember | null>(null);
+  protected member = computed(() => this.memberService.member());
   protected title = signal<string | undefined>('');
   protected isCurrentUser = computed(() => {
     return this.authService.currentUser()?.id === this.paramMap()?.get('id')
@@ -37,11 +36,6 @@ export class MemberDetails implements OnInit {
 
   ngOnInit(): void {
     this.title.set(this.route.firstChild?.snapshot?.title);
-    this.route.data.pipe(takeUntilDestroyed(this.destroy$)).subscribe((data) => {
-      if (data['member']) {
-        this.member.set(data['member']);
-      }
-    });
     this.getNavigationEnd();
   }
 

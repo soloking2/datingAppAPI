@@ -23,9 +23,8 @@ export class Nav implements OnInit {
   private readonly storageService = inject(LocalStorage);
   private readonly destory$ = inject(DestroyRef);
 
-
   protected isLoggedIn = computed(() => !!this.authService.currentUser());
-  protected user = signal<User | null>(this.authService.currentUser());
+  protected user = computed<User | null>(() => this.authService.currentUser());
   protected selectedtheme = signal<string>(this.storageService.getItem<string>('theme') || 'light');
   protected themes = themes;
 
@@ -33,14 +32,13 @@ export class Nav implements OnInit {
     document.documentElement.dataset['theme'] = this.selectedtheme();
   }
 
-
   protected handleUserLoggedIn(user: { email: string; password: string }) {
     this.authService
       .login(user)
       .pipe(takeUntilDestroyed(this.destory$))
       .subscribe({
         next: (response) => {
-          this.user.set(response as User);
+          this.authService.currentUser.set(response as User);
           this.toastService.success('User has successfully logged in');
           this.router.navigate(['/member-list']);
         },
@@ -62,6 +60,6 @@ export class Nav implements OnInit {
     // Prefer using dataset over setAttribute for data-* attributes
     document.documentElement.dataset['theme'] = theme;
     const elem = document.activeElement as HTMLDivElement;
-    if(elem) elem.blur();
+    if (elem) elem.blur();
   }
 }

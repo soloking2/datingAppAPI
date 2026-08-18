@@ -1,10 +1,33 @@
-<div class="grid grid-cols-4 auto-rows-min gap-3 p-5 h-[65vh] overflow-auto">
-    @if(photos().length > 0) {
-    @for (photo of photos(); track photo.id) {
-      <img [src]="photo.url" alt="for a member" class="w-full rounded-lg">
-    }
-  }
-    @for (photo of mockPhotos; track $index) {
-      <img [src]="photo.url" alt="for a member" class="w-full rounded-lg">
+@if (!isEditMode()) {
+  <div class="grid grid-cols-4 auto-rows-min gap-3 p-5 h-[65vh] overflow-auto">
+    @if (photos().length > 0) {
+      @for (photo of photos(); track photo.id) {
+        <div class="relative">
+          <img [src]="photo.url" alt="for a member" class="w-full rounded-lg" />
+          @if (isCurrentUser()) {
+            @if (photo.url !== member()?.imageUrl) {
+              <dating-delete-button
+                (emitClick)="onDeletePhoto(photo.id)"
+                class="absolute top-1 left-1"
+              />
+            }
+            <dating-star-button
+              [disabled]="photo.url === member()?.imageUrl"
+              [isSelected]="photo.url === member()?.imageUrl"
+              (emitClick)="setMainPhoto(photo)"
+              class="absolute top-1 right-1"
+            />
+          }
+        </div>
+      }
+    } @else {
+      <p class="text-center text-gray-500">No photos available</p>
     }
   </div>
+} @else {
+  <dating-image-upload
+    fileType=".jpg,.jpeg,.png"
+    [loading]="loading()"
+    (uploadFile)="onUploadImage($event)"
+  />
+}

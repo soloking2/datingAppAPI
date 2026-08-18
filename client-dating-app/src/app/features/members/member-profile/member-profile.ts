@@ -1,6 +1,7 @@
 import {
   Component,
   computed,
+  DestroyRef,
   HostListener,
   inject,
   OnDestroy,
@@ -9,10 +10,12 @@ import {
 } from '@angular/core';
 import { IEditMember, IMember } from '../../../core/interfaces/member';
 import { ActivatedRoute } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
 import { MemberService } from '../services/member-service';
 import { FormsModule, NgForm } from '@angular/forms';
+import { ToastService } from '../../../core/services/toast-service';
+import { Auth } from '../../../auth/services/auth';
 
 @Component({
   selector: 'dating-member-profile',
@@ -30,9 +33,11 @@ export class MemberProfile implements OnDestroy, OnInit {
 
   private readonly route = inject(ActivatedRoute);
   private readonly memberService = inject(MemberService);
+  private readonly destroy$ = inject(DestroyRef);
+  private readonly toastService = inject(ToastService);
+  private readonly authService = inject(Auth);
 
-  private readonly memberData = toSignal(this.route.data);
-  protected member = computed<IMember | null>(() => this.memberData()?.['member']);
+  protected member = computed(() => this.memberService.member());
 
   protected editMode = computed(() => this.memberService.editProfile());
 
@@ -54,7 +59,26 @@ export class MemberProfile implements OnDestroy, OnInit {
   public updateEditableMember() {
     if (Object.keys(this.editableMember).length === 0) return;
     const updatedMember = { ...this.member(), ...this.editableMember };
-    console.log(updatedMember);
+    this.memberService
+      .updateMember(this.editableMember)
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: () => {
+          const currentUser = this.authService.currentUser();
+          if (currentUser && updatedMember.displayName !== currentUser.name) {
+            const updatedUser = {
+              ...currentUser,
+              name: updatedMember.displayName,
+            };
+            this.authService.currentUser.update(prev => updatedUser);
+            this.authService.setCurrentUser(updatedUser);
+          }
+
+          this.toastService.success('Member updated successfully');
+          this.memberService.member.set(updatedMember as IMember);
+          this.editForm.reset(updatedMember);
+        },
+      });
   }
 
   ngOnDestroy(): void {

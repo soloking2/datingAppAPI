@@ -1,0 +1,25 @@
+<input
+  [type]="type()"
+  class="input w-full"
+  [max]="maxDate()"
+  [placeholder]="label()"
+  [class.input-error]="displayError(control)"
+  [formControl]="control"
+/>
+@if (displayError(control)) {
+  @if(control.hasError('required')) {
+    <div class="text-error text-xs">{{ label() }} is required</div>
+  }
+  @if(control.hasError('email')) {
+    <div class="text-error text-xs">Email is required</div>
+  }
+  @if(control.hasError('minlength')) {
+    <div class="text-error text-xs">{{label()}} must be at least {{control.errors?.['minlength'].requiredLength}} characters</div>
+  }
+  @if(control.hasError('manlength')) {
+    <div class="text-error text-xs">{{label()}} must be at least {{control.errors?.['manlength'].requiredLength}} characters</div>
+  }
+  @if(control.hasError('passwordMismatch')) {
+    <div class="text-error text-xs">Password do not match</div>
+  }
+}

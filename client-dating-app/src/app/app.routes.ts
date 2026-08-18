@@ -66,12 +66,6 @@ export const routes: Routes = [
       },
     ],
   },
-
-  {
-    path: '',
-    redirectTo: '/',
-    pathMatch: 'full',
-  },
   {
     component: ServerError,
     path: 'server-error',
