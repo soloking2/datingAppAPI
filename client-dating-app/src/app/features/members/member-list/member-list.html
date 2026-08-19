@@ -1,5 +1,14 @@
+@if(memberList()?.metadata; as metaData) {
+  <dating-paginator
+  [pageNumber]="metaData.currentPage"
+  [pageSize]="metaData.pageSize"
+  [totalCount]="metaData.totalCount"
+  [pageCount]="metaData.totalPages"
+  (pageChange)="onPageChange($event)"
+  />
+}
 <div class="grid grid-cols-5 gap-3">
-  @for (member of memberList(); track $index) {
+  @for (member of memberList()?.items; track $index) {
     <dating-member-card [member]="member"/>
   }
 </div>

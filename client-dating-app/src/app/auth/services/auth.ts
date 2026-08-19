@@ -1,9 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service, signal } from '@angular/core';
 import { catchError, tap } from 'rxjs';
-import { User } from '../../core/interfaces/User';
+import { IRegister, User } from '../../core/interfaces/User';
 import { LocalStorage } from '../../core/services/local-storage';
-import { UserRegister } from '../../core/interfaces/IRegister';
 import { environment } from '../../../environments/environment';
 
 @Service()
@@ -26,7 +25,7 @@ export class Auth {
     );
   }
 
-  public register(payload: UserRegister) {
+  public register(payload: IRegister) {
     return this.http.post<User>(`${this.baseUrl}/register`, payload).pipe(
       tap((user) => {
         this.setCurrentUser(user);

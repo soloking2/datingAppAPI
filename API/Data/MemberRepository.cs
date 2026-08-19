@@ -1,3 +1,5 @@
+using API.Helpers;
+
 namespace API.Data;
 
 public class MemberRepository(ApiDbContext dbContext) : IMemberRepository
@@ -12,9 +14,10 @@ public class MemberRepository(ApiDbContext dbContext) : IMemberRepository
         return await dbContext.SaveChangesAsync() > 0;
     }
 
-    public async Task<IReadOnlyList<Member>> GetMemberAsync()
+    public async Task<PaginatedResult<Member>> GetMemberAsync(PagingParams pagingParams)
     {
-        return await dbContext.Members.ToListAsync();
+        var query = dbContext.Members.AsQueryable();
+        return await PaginationHelper<Member>.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
     }
 
     public async Task<Member?> GetMemberByIdAsync(string id)

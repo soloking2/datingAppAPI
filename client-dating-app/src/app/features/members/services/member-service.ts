@@ -3,6 +3,7 @@ import { inject, Service, signal } from '@angular/core';
 import { IEditMember, IMember, Photo } from '../../../core/interfaces/member';
 import { environment } from '../../../../environments/environment';
 import { tap } from 'rxjs';
+import { IQuery, PaginationResult } from '../../../core/interfaces/pagination';
 
 @Service()
 export class MemberService {
@@ -11,8 +12,8 @@ export class MemberService {
   public editProfile = signal(false);
   public member = signal<IMember | null>(null);
 
-  getMembers() {
-    return this.http.get<IMember[]>(`${this.baseUrl}/members`);
+  getMembers(query?: IQuery) {
+    return this.http.get<PaginationResult<IMember[]>>(`${this.baseUrl}/members`, {params: {...query}});
   }
 
   getMemberById(id: string) {

@@ -22,6 +22,7 @@ import { ProfileForm, UserRegister } from '../../core/interfaces/IRegister';
 import { DisplayErrorMessage } from '../../shared/utilities/input-validation';
 import { TextInput } from '../../shared/components/text-input/text-input';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { IRegister } from '../../core/interfaces/User';
 
 @Component({
   selector: 'dating-register',
@@ -34,7 +35,7 @@ export class Register implements OnInit {
   private readonly destroy$ = inject(DestroyRef);
   protected credentialsForm!: FormGroup<UserRegister>;
   protected profileForm!: FormGroup<ProfileForm>;
-  registerOutput = output<UserRegister>();
+  registerOutput = output<IRegister>();
   isRegistering = model<boolean>(false);
   cancelOutput = output<boolean>();
   validationErrors = input.required<string[]>();
@@ -86,7 +87,19 @@ export class Register implements OnInit {
     if(!this.credentialsForm.valid && !this.profileForm.valid) {
       return;
     }
-    this.registerOutput.emit(this.credentialsForm.value as unknown as UserRegister);
+    const {email, displayName, password} = this.credentialsForm.value;;
+    const {gender, city, country, dateOfBirth} = this.profileForm.value
+    const registerPayload: IRegister = {
+      email,
+      displayName,
+      password,
+      gender,
+      dateOfBirth,
+      city,
+      country
+
+    } as IRegister;
+    this.registerOutput.emit(registerPayload);
     this.isRegistering.update((registering) => !registering);
   }
 

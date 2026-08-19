@@ -27,13 +27,6 @@
             Next
           </button>
         </div>
-        @if (validationErrors().length > 0) {
-          <ul class="card text-red-500 bg-base-100 text-xs">
-            @for (error of validationErrors(); track $index) {
-              <li class="list-decimal">{{ error }}</li>
-            }
-          </ul>
-        }
       </form>
     }
     @if (currentStep() === 2) {
@@ -82,17 +75,22 @@
             class="btn btn-primary"
             [disabled]="profileForm.invalid || isRegistering()"
           >
+            @if (isRegistering()) {
+              <span class="loading loading-spinner"></span>
+            }
             Register
           </button>
         </div>
-        @if (validationErrors().length > 0) {
-          <ul class="card text-red-500 bg-base-100 text-xs">
-            @for (error of validationErrors(); track $index) {
-              <li class="list-decimal">{{ error }}</li>
-            }
-          </ul>
-        }
       </form>
     }
   </div>
+  @if (validationErrors().length > 0) {
+    <div class="mt-5 flex bg-gray-200 rounded-2xl w-1/2 p-3 mx-auto">
+      <ul class="card text-red-500 bg-base-100 text-xs">
+        @for (error of validationErrors(); track $index) {
+          <li class="list-decimal">{{ error }}</li>
+        }
+      </ul>
+    </div>
+  }
 </div>

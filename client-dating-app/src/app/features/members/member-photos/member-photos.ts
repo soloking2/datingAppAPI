@@ -6,8 +6,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ImageUpload } from '../../../shared/components/image-upload/image-upload';
 import { ToastService } from '../../../core/services/toast-service';
 import { Auth } from '../../../auth/services/auth';
-import { StarButton } from "../../../shared/components/star-button/star-button";
-import { DeleteButton } from "../../../shared/components/delete-button/delete-button";
+import { StarButton } from '../../../shared/components/star-button/star-button';
+import { DeleteButton } from '../../../shared/components/delete-button/delete-button';
 
 @Component({
   selector: 'dating-member-photos',
@@ -27,7 +27,9 @@ export class MemberPhotos implements OnInit {
   protected photos = signal<Photo[]>([]);
   protected loading = signal<boolean>(false);
   protected member = computed(() => this.memberService.member());
-  protected isCurrentUser = computed(() => this.authService.currentUser()?.id === this.member()?.id);
+  protected isCurrentUser = computed(
+    () => this.authService.currentUser()?.id === this.member()?.id,
+  );
 
   ngOnInit(): void {
     this.memberService
@@ -54,6 +56,9 @@ export class MemberPhotos implements OnInit {
           this.loading.set(false);
           this.memberService.editProfile.set(false);
           this.photos.update((prev) => [...prev, response as Photo]);
+          if (this.authService.currentUser()?.imageUrl === null) {
+            this.setProfileAndUserImage(response as Photo);
+          }
         },
         error: (error) => {
           this.loading.set(false);
@@ -67,25 +72,7 @@ export class MemberPhotos implements OnInit {
       .setMainPhoto(photo.id)
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe(() => {
-        this.memberService.member.update((prev) => {
-          if (!prev) {
-            return null;
-          }
-
-          return {
-            ...prev,
-            imageUrl: photo.url,
-          };
-        });
-        const currentUser = this.authService.currentUser();
-        if (currentUser?.imageUrl) {
-          const updatedUser = {
-            ...currentUser,
-            imageUrl: photo.url,
-          };
-          this.authService.currentUser.update((prev) => updatedUser);
-          this.authService.setCurrentUser(updatedUser);
-        }
+        this.setProfileAndUserImage(photo);
       });
   }
 
@@ -94,7 +81,29 @@ export class MemberPhotos implements OnInit {
       .deleteMemberPhoto(photoId)
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe(() => {
-         this.photos.update((prev) => prev.filter(photo => photo.id !== photoId));
+        this.photos.update((prev) => prev.filter((photo) => photo.id !== photoId));
       });
+  }
+
+  private setProfileAndUserImage(photo: Photo) {
+    this.memberService.member.update((prev) => {
+      if (!prev) {
+        return null;
+      }
+
+      return {
+        ...prev,
+        imageUrl: photo.url,
+      };
+    });
+    const currentUser = this.authService.currentUser();
+    if (currentUser) {
+      const updatedUser = {
+        ...currentUser,
+        imageUrl: photo.url,
+      };
+      this.authService.currentUser.update((prev) => updatedUser);
+      this.authService.setCurrentUser(updatedUser);
+    }
   }
 }

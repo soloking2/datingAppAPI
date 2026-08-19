@@ -18,7 +18,17 @@ public class AccountController(ApiDbContext dbContext, ITokenService tokenServic
    DisplayName = registrationDto.DisplayName,
    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes((registrationDto.Password))),
    PasswordSalt = hmac.Key,
-   ImageUrl = registrationDto.ImageUrl
+   ImageUrl = registrationDto.ImageUrl,
+   Member = new Member
+   {
+    Gender = registrationDto.Gender,
+    DateOfBirth = registrationDto.DateOfBirth,
+    City = registrationDto.City,
+    DisplayName = registrationDto.DisplayName,
+    Country = registrationDto.Country
+    
+   }
+   
   };
   
  

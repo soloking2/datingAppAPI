@@ -2,6 +2,7 @@
 
 using System.Security.Claims;
 using API.Extensions;
+using API.Helpers;
 
 namespace API.Controllers
 {
@@ -9,9 +10,9 @@ namespace API.Controllers
     public class MembersController(IMemberRepository memberRepository, IPhotoService photoService) : BaseController
     {
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<Member>>> Get()
+        public async Task<ActionResult<IReadOnlyList<Member>>> Get([FromQuery] PagingParams pagingParams)
         {
-            var members = await memberRepository.GetMemberAsync();
+            var members = await memberRepository.GetMemberAsync(pagingParams);
             return Ok(members);
         }
        
