@@ -9,11 +9,12 @@ public class LikesRepository(ApiDbContext dbContext) : ILikesRepository
         return await dbContext.Likes.FindAsync(sourceMemberId, targetMemberId);
     }
 
-    public async Task<PaginatedResult<Member>> GetMemberLikes(string predicate, string memberId, PagingParams pagingParams)
+    public async Task<PaginatedResult<Member>> GetMemberLikes(LikesParams likesParams)
     {
         var query = dbContext.Likes.AsQueryable();
+        var memberId = likesParams.MemberId;
         IQueryable<Member> result;
-        switch (predicate)
+        switch (likesParams.Predicate)
         {
             case "liked":
                 result = query.Where(x => x.SourceMemberId == memberId)
@@ -32,7 +33,7 @@ public class LikesRepository(ApiDbContext dbContext) : ILikesRepository
                 break;
         }
 
-        return await PaginationHelper<Member>.CreateAsync(result, pagingParams.PageNumber, pagingParams.PageSize);
+        return await PaginationHelper<Member>.CreateAsync(result, likesParams.PageNumber, likesParams.PageSize);
     }
 
     public async Task<IReadOnlyList<string>> GetCurrentMemberIds(string memberId)
