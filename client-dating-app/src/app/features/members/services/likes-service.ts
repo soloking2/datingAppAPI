@@ -3,6 +3,7 @@ import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { IMember } from '../../../core/interfaces/member';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { IQuery, PaginationResult } from '../../../core/interfaces/pagination';
 
 @Service()
 export class LikesService {
@@ -15,8 +16,8 @@ export class LikesService {
     return this.http.post(`${this.baseUrl}/likes/${targetMemberId}`, {});
   }
 
-  getLikes(predicate: string) {
-    return this.http.get<IMember[]>(`${this.baseUrl}/likes?predicate=${predicate}`);
+  getLikes(predicate: string, query?: IQuery) {
+    return this.http.get<PaginationResult<IMember[]>>(`${this.baseUrl}/likes?predicate=${predicate}`, {params: {...query}});
   }
 
   getLikeIds() {

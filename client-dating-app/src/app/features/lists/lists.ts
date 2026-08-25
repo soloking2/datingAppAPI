@@ -4,6 +4,8 @@ import { IMember } from '../../core/interfaces/member';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MemberCard } from "../members/components/member-card/member-card";
 import { ToastService } from '../../core/services/toast-service';
+import { IQuery, Metadata } from '../../core/interfaces/pagination';
+import { Paginator } from "../../shared/paginator/paginator";
 type Tab = {
   label: string;
   value: string;
@@ -11,7 +13,7 @@ type Tab = {
 
 @Component({
   selector: 'dating-lists',
-  imports: [MemberCard],
+  imports: [MemberCard, Paginator],
   templateUrl: './lists.html',
   styleUrl: './lists.css',
 })
@@ -21,6 +23,7 @@ export class Lists implements OnInit {
   private readonly toastService = inject(ToastService);
 
   protected members = signal<IMember[]>([]);
+  protected metaData = signal<Metadata | null>(null)
   protected predicate = signal<string>('liked');
   protected likedIds = computed(() => this.likesService.likeIds());
 
@@ -43,12 +46,13 @@ export class Lists implements OnInit {
     this.loadLikedMembers(this.predicate());
   }
 
-  loadLikedMembers(predicate: string) {
+  loadLikedMembers(predicate: string, query?: IQuery) {
     this.likesService
-      .getLikes(predicate)
+      .getLikes(predicate, query)
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe((response) => {
-        this.members.set(response);
+        this.members.set(response.items);
+        this.metaData.set(response.metadata);
       });
   }
 
@@ -78,4 +82,9 @@ export class Lists implements OnInit {
         },
       });
   }
+
+  onPageChange($event: IQuery) {
+      const pagination = { ...$event };
+      this.loadLikedMembers(this.predicate(), pagination);
+    }
 }
