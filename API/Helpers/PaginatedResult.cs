@@ -14,7 +14,7 @@ public class PaginationMetadata
     public int TotalCount { get; set; }
 }
 
-public class PaginationHelper<T>
+public static class PaginationHelper<T>
 {
     public static async Task<PaginatedResult<T>> CreateAsync(IQueryable<T> query, int pageNumber, int pageSize)
     {

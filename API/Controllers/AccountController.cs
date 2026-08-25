@@ -62,7 +62,8 @@ public class AccountController(ApiDbContext dbContext, ITokenService tokenServic
   {
    DisplayName = user.DisplayName,
    Id = user.Id,
-   ImageUrl = user.ImageUrl
+   ImageUrl = user.ImageUrl,
+   email = user.Email
   }).ToListAsync();
   return Ok(users);
  }

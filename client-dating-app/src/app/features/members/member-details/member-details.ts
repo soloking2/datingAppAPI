@@ -9,7 +9,7 @@ import {
   RouterOutlet,
 } from '@angular/router';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { AgeOldPipe } from '../../../core/pipe/age-old-pipe';
+import { AgeOldPipe } from '../../../core/pipes/age-old-pipe';
 import { filter } from 'rxjs';
 import { Auth } from '../../../auth/services/auth';
 
@@ -30,7 +30,7 @@ export class MemberDetails implements OnInit {
   protected member = computed(() => this.memberService.member());
   protected title = signal<string | undefined>('');
   protected isCurrentUser = computed(() => {
-    return this.authService.currentUser()?.id === this.paramMap()?.get('id')
+    return this.authService.currentUser()?.id === this.paramMap()?.get('id');
   });
   protected editMode = computed(() => this.memberService.editProfile());
 

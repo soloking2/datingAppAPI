@@ -13,4 +13,8 @@ export interface PaginationResult<T> {
 export interface IQuery {
   pageNumber: number;
   pageSize: number;
+  minAge?: number;
+  gender?: string;
+  maxAge?: number;
+  orderBy?: string;
 }

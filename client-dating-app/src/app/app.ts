@@ -1,14 +1,9 @@
 
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Nav } from './layout/nav/nav';
 import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
-
-interface IMember {
-  id: string;
-  name: string;
-  email: string;
-}
+import { LikesService } from './features/members/services/likes-service';
 
 @Component({
   selector: 'app-root',
@@ -16,8 +11,14 @@ interface IMember {
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
-export class App {
+export class App implements OnInit {
   protected router = inject(Router);
+  private readonly likeService = inject(LikesService);
+
+
+  ngOnInit(): void {
+    this.likeService.getLikeIds();
+  }
 
 
 }

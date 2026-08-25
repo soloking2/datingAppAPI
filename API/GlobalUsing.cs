@@ -7,3 +7,4 @@ global using System.Text;
 global using API.DTOs;
 global using API.Entities;
 global using API.Interfaces;
+global using API.Extensions;

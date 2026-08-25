@@ -1,6 +1,6 @@
-import { Component, input } from '@angular/core';
+import { Component, computed, input, output, Signal } from '@angular/core';
 import { IMember } from '../../../../core/interfaces/member';
-import { AgeOldPipe } from "../../../../core/pipe/age-old-pipe";
+import { AgeOldPipe } from '../../../../core/pipes/age-old-pipe';
 import { TitleCasePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -12,4 +12,13 @@ import { RouterLink } from '@angular/router';
 })
 export class MemberCard {
   member = input.required<IMember>();
+  likedIds = input<string[]>([]);
+  isLiked = computed(() => this.likedIds().includes(this.member().id));
+
+  likeOutput = output<{targetMemberId: string, hasLiked: Signal<boolean>}>();
+
+  onHandleLike(targetMemberId: string, event: Event) {
+    event.stopPropagation();
+    this.likeOutput.emit({targetMemberId, hasLiked: this.isLiked});
+  }
 }
