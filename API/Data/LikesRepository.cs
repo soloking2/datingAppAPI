@@ -12,7 +12,7 @@ public class LikesRepository(ApiDbContext dbContext) : ILikesRepository
     public async Task<PaginatedResult<Member>> GetMemberLikes(LikesParams likesParams)
     {
         var query = dbContext.Likes.AsQueryable();
-        var memberId = likesParams.MemberId;
+        string memberId = likesParams.MemberId!;
         IQueryable<Member> result;
         switch (likesParams.Predicate)
         {

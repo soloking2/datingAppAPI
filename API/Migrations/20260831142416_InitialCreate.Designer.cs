@@ -3,6 +3,7 @@ using System;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    partial class ApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260831142416_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.11");
@@ -242,21 +245,21 @@ namespace API.Migrations
                         new
                         {
                             Id = "member-id",
-                            ConcurrencyStamp = "07315d07-7253-4040-9988-0c8f3bcb0625",
+                            ConcurrencyStamp = "038c8faa-d885-4c0f-a751-e9ea9b9c5327",
                             Name = "Member",
                             NormalizedName = "MEMBER"
                         },
                         new
                         {
                             Id = "moderator-id",
-                            ConcurrencyStamp = "7d6510a3-ab19-4c00-9e1a-f28fd8c456ee",
+                            ConcurrencyStamp = "995d5dac-0054-4f6c-858f-b75097d993f2",
                             Name = "Moderator",
                             NormalizedName = "MODERATOR"
                         },
                         new
                         {
                             Id = "admin-id",
-                            ConcurrencyStamp = "7a099376-674c-4c83-8fd0-e6ace9392a7c",
+                            ConcurrencyStamp = "c404276f-fdf3-4cc4-8848-eacc36bd3073",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });

@@ -1,23 +1,21 @@
 
-using API.Extensions;
+using Microsoft.AspNetCore.Identity;
 
 namespace API.Controllers;
 
-public class AccountController(ApiDbContext dbContext, ITokenService tokenService) : BaseController
+public class AccountController(UserManager<AppUser> userManager, ITokenService tokenService) : BaseController
 {
- private readonly ApiDbContext _dbContext = dbContext;
+ 
 
  [HttpPost("register")]
- public async Task<IActionResult> Register([FromBody] RegisterDto registrationDto)
+ public async Task<ActionResult<UserDto>> Register([FromBody] RegisterDto registrationDto)
  {
-  if (await EmailExists(registrationDto.Email)) return BadRequest("Email already Exists");
-  using var hmac = new HMACSHA512();
+  
   var user = new AppUser()
   {
    Email = registrationDto.Email,
+   UserName = registrationDto.Email,
    DisplayName = registrationDto.DisplayName,
-   PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes((registrationDto.Password))),
-   PasswordSalt = hmac.Key,
    ImageUrl = registrationDto.ImageUrl,
    Member = new Member
    {
@@ -26,31 +24,38 @@ public class AccountController(ApiDbContext dbContext, ITokenService tokenServic
     City = registrationDto.City,
     DisplayName = registrationDto.DisplayName,
     Country = registrationDto.Country
-    
    }
-   
   };
   
  
-  await _dbContext.Users.AddAsync(user);
-  await _dbContext.SaveChangesAsync();
-  return Ok(user.ToDto(tokenService));
+  var result = await userManager.CreateAsync(user, registrationDto.Password);
+  if (result.Succeeded)
+  {
+   await userManager.AddToRoleAsync(user, "Member");
+   return Ok(user.ToDto(tokenService));
+  }
+  else
+  {
+   foreach (var error in result.Errors)
+   {
+    ModelState.AddModelError("identity", error.Description);
+   }
+
+   return ValidationProblem();
+  }
+ 
+  
  }
 
  [HttpPost("login")]
  public async Task<ActionResult<UserDto>> Login([FromBody] LoginDto loginDto)
  {
-  var user = await _dbContext.Users.SingleOrDefaultAsync(user => user.Email.ToLower() == loginDto.Email.ToLower());
+  var user = await userManager.FindByEmailAsync(loginDto.Email);
   if (user == null) return Unauthorized("Invalid email or password");
-  using var hmac = new HMACSHA512(user.PasswordSalt);
-  var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
 
-  for (var i = 0; i < computedHash.Length; i++)
-  {
-   if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid email or password");
-  }
-
-  return user.ToDto(tokenService);
+  var result = await userManager.CheckPasswordAsync(user, loginDto.Password);
+  if (!result) return Unauthorized("Invalid email or password");
+  return await user.ToDto(tokenService);
 
 
  }
@@ -58,7 +63,7 @@ public class AccountController(ApiDbContext dbContext, ITokenService tokenServic
  [HttpGet("users")]
  public async Task<ActionResult> GetUsers()
  {
-  var users = await _dbContext.Users.Select(user => new
+  var users = await userManager.Users.Select(user => new
   {
    DisplayName = user.DisplayName,
    Id = user.Id,
@@ -67,11 +72,7 @@ public class AccountController(ApiDbContext dbContext, ITokenService tokenServic
   }).ToListAsync();
   return Ok(users);
  }
-
- private async Task<bool> EmailExists(string email)
- {
-  return await _dbContext.Users.AnyAsync(user => user.Email.ToLower() == email.ToLower());
- }
+ 
  
  
 }

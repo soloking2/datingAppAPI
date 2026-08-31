@@ -11,12 +11,12 @@
       </button>
     }
   </div>
-  @if (metaData(); as metaData) {
+  @if (metaData()!.totalCount > 0) {
     <dating-paginator
-      [pageNumber]="metaData.currentPage"
-      [pageSize]="metaData.pageSize"
-      [totalCount]="metaData.totalCount"
-      [pageCount]="metaData.totalPages"
+      [pageNumber]="metaData()!.currentPage"
+      [pageSize]="metaData()!.pageSize"
+      [totalCount]="metaData()!.totalCount"
+      [pageCount]="metaData()!.totalPages"
       (pageChange)="onPageChange($event)"
     />
   }
@@ -83,5 +83,9 @@
         }
       </tbody>
     </table>
+  </div>
+}@else {
+  <div class="bg-base-100 flex justify-center">
+    There are no messages
   </div>
 }

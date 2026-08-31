@@ -1,12 +1,13 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Identity;
 
 namespace API.Data;
 
-public class Seed
+public static class Seed
 {
-    public static async Task SeedUsers(ApiDbContext context)
+    public static async Task SeedUsers(UserManager<AppUser> userManager)
     {
-        if (await context.Users.AnyAsync())
+        if (await userManager.Users.AnyAsync())
         {
             return;
         }
@@ -22,36 +23,57 @@ public class Seed
 
         foreach (var member in members)
         {
-            var hmac = new HMACSHA512();
+            
             var user = new AppUser
             {
                 Id = member.Id,
                 DisplayName = member.DisplayName,
+                UserName = member.Email,
                 Email = member.Email,
                 ImageUrl = member.ImageUrl,
-                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("password")),
-                PasswordSalt = hmac.Key
-            };
-            user.Member = new Member
-            {
-                Id = member.Id,
-                DisplayName = member.DisplayName,
-                City = member.City,
-                Country = member.Country,
-                DateOfBirth = member.DateOfBirth,
-                Created = member.Created,
-                Description = member.Description,
-                Gender = member.Gender,
-                LastActive = member.LastActive,
-                ImageUrl = member.ImageUrl
+                Member = new Member
+                {
+                    Id = member.Id,
+                    DisplayName = member.DisplayName,
+                    City = member.City,
+                    Country = member.Country,
+                    DateOfBirth = member.DateOfBirth,
+                    Created = member.Created,
+                    Description = member.Description,
+                    Gender = member.Gender,
+                    LastActive = member.LastActive,
+                    ImageUrl = member.ImageUrl
+                }
             };
             user.Member.Photos.Add(new Photo
             {
                 Url = member.ImageUrl,
                 MemberId = member.Id
             });
-            context.Users.Add(user);
+            var result = await userManager.CreateAsync(user, "Pa$$word123");
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(user, "Member");
+            }
+            else
+            {
+                Console.WriteLine(result.Errors.First().Description);
+            }
         }
-        await context.SaveChangesAsync();
+
+        var admin = new AppUser()
+        {
+            UserName = "admin@test.com",
+            Email = "admin@test.com",
+            DisplayName = "Admin"
+        };
+        var res = await userManager.CreateAsync(admin, "Pa$$word123");
+        if (res.Succeeded)
+        {
+            await userManager.AddToRolesAsync(admin, ["Admin", "Moderator"]);
+        } else
+        {
+            Console.WriteLine(res.Errors.First().Description);
+        }
     }
 }
