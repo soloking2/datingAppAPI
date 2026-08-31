@@ -12,6 +12,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AgeOldPipe } from '../../../core/pipes/age-old-pipe';
 import { filter } from 'rxjs';
 import { Auth } from '../../../auth/services/auth';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'dating-member-details',
@@ -26,6 +27,7 @@ export class MemberDetails implements OnInit {
   private readonly paramMap = toSignal(this.route.paramMap);
   private readonly destroy$ = inject(DestroyRef);
   protected readonly memberService = inject(MemberService);
+  protected readonly location = inject(Location);
 
   protected member = computed(() => this.memberService.member());
   protected title = signal<string | undefined>('');

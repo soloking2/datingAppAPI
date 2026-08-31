@@ -18,3 +18,9 @@ export interface IQuery {
   maxAge?: number;
   orderBy?: string;
 }
+
+
+export type Tab = {
+  label: string;
+  value: string;
+};

@@ -10,13 +10,15 @@ public class ApiDbContext(DbContextOptions<ApiDbContext> dbContextOptions) : DbC
     public DbSet<Member> Members { get; set; }
     public DbSet<Photo> Photos { get; set; }
     public DbSet<MemberLike> Likes { get; set; }
+    public DbSet<Message> Messages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<MemberLike>().HasKey(k => new { k.SourceMemberId, k.TargetMemberId });
         
-        //configure individual entities
+        
+        //configure individual entities for memberLike one-to-many-relationship
         modelBuilder.Entity<MemberLike>()
             .HasOne(s => s.SourceMember)
             .WithMany(t => t.LikedMembers)
@@ -29,8 +31,20 @@ public class ApiDbContext(DbContextOptions<ApiDbContext> dbContextOptions) : DbC
             .HasForeignKey(s => s.TargetMemberId)
             .OnDelete((DeleteBehavior.NoAction));
         
+        //Configure entities for messages one-to-many-relationship
+        modelBuilder.Entity<Message>().HasOne(x => x.Recipient)
+            .WithMany(m => m.MessagesReceived)
+            .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<Message>().HasOne(x => x.Sender)
+            .WithMany(m => m.MessagesSent)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        //Converting DateTime to ISO
         var dateTimeConverter = new ValueConverter<DateTime,DateTime>(v => v.ToUniversalTime(),
             v=> DateTime.SpecifyKind(v, DateTimeKind.Utc));
+        var nullableDateTimeConverter = new ValueConverter<DateTime?,DateTime?>(v => 
+                v.HasValue ? v.Value.ToUniversalTime() : null,
+            v=> v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : null);
         foreach (var entityTpe in modelBuilder.Model.GetEntityTypes())
         {
             foreach (var property in entityTpe.GetProperties())
@@ -38,6 +52,9 @@ public class ApiDbContext(DbContextOptions<ApiDbContext> dbContextOptions) : DbC
                 if (property.ClrType == typeof(DateTime))
                 {
                     property.SetValueConverter(dateTimeConverter);
+                } else if (property.ClrType == typeof(DateTime?))
+                {
+                    property.SetValueConverter(nullableDateTimeConverter);
                 }
             }
             

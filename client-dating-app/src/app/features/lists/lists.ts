@@ -4,12 +4,9 @@ import { IMember } from '../../core/interfaces/member';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MemberCard } from "../members/components/member-card/member-card";
 import { ToastService } from '../../core/services/toast-service';
-import { IQuery, Metadata } from '../../core/interfaces/pagination';
+import { IQuery, Metadata, Tab } from '../../core/interfaces/pagination';
 import { Paginator } from "../../shared/paginator/paginator";
-type Tab = {
-  label: string;
-  value: string;
-};
+
 
 @Component({
   selector: 'dating-lists',

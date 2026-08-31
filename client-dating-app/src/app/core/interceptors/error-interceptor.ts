@@ -36,6 +36,18 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         case 500:
           router.navigate(['server-error'], { state: { error: error.error } });
           break;
+        case 0:
+          router.navigate(['server-error'], {
+            state: {
+              error: {
+                statusCode: error.status,
+                message: error.error.message,
+                details: 'Server is down or unreachable',
+              },
+            },
+          });
+
+          break;
         default:
           toastService.error('Something went wrong');
           break;

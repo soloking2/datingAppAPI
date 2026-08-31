@@ -1,41 +1,44 @@
 @if (member(); as member) {
   <div class="flex gap-5">
-    <div class="card bg-base-100 flex flex-col h-[95vh] w-1/4 shadow-2xl">
+    <div class="card bg-base-100 flex flex-col h-[85vh] w-1/4 shadow-2xl overflow-clip">
       <img
         [src]="member?.imageUrl || 'user.png'"
         [alt]="member?.displayName"
-        class="rounded-full mx-10 mt-3 object-cover"
+        class="rounded-full mx-auto mt-1 object-cover h-60 w-60 justify-self-center"
       />
       <div class="card-body">
         <div class="flex flex-col items-center">
           <div class="flex text-2xl text-primary">
-          {{member.displayName}},  {{ member.dateOfBirth | ageOld }}
+            {{ member.displayName }}, {{ member.dateOfBirth | ageOld }}
           </div>
           <div class="text-sm">{{ member.city }}, {{ member.country }}</div>
         </div>
         <div class="divider"></div>
-        <ul class="menu rounded-box w-full text-xl">
+        <ul class="menu rounded-box w-full text-md">
           <li><a routerLink="profile" routerLinkActive="text-primary">Profile</a></li>
           <li><a routerLink="photos" routerLinkActive="text-primary">Photos</a></li>
           <li><a routerLink="messages" routerLinkActive="text-primary">Messages</a></li>
         </ul>
       </div>
       <div class="card-actions justify-between gap-2 px-2 mb-4">
-        <button class="btn btn-info flex-1">Go back</button>
+        <button class="btn btn-info flex-1" (click)="location.back()">Go back</button>
         <button class="btn btn-primary flex-1">Like user</button>
       </div>
     </div>
-    <div class="card bg-base-100 w-3/4 p-6 shadow-2xl">
+    <div class="card bg-base-100 w-3/4 p-6 shadow-2xl h-[85vh]">
       <div class="flex justify-between">
         <h3 class="card-title text-3xl text-primary">{{ title() }}</h3>
         @if (isCurrentUser()) {
-          <button class="btn btn-outline" (click)="memberService.editProfile.update(prev => !prev)">
-            {{editMode() ? 'Cancel' : 'Edit'}}
+          <button
+            class="btn btn-outline"
+            (click)="memberService.editProfile.update((prev) => !prev)"
+          >
+            {{ editMode() ? 'Cancel' : 'Edit' }}
           </button>
         }
       </div>
       <div class="divider"></div>
-      <div>
+      <div class="h-full">
         <router-outlet />
       </div>
     </div>

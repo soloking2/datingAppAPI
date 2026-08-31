@@ -1,4 +1,4 @@
-import { Location } from '@angular/common';
+import {  Location } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { IApiError } from '../../core/interfaces/error';
@@ -12,10 +12,10 @@ import { IApiError } from '../../core/interfaces/error';
 export class ServerError {
   private readonly router = inject(Router);
   protected location = inject(Location);
-  protected error = signal<IApiError>({} as IApiError);
+  protected error = signal<IApiError | null>(null);
   protected showDetails = signal(false);
 
   constructor() {
-    this.error = this.router.currentNavigation()?.extras?.state?.['errors'];
+    this.error.set(this.router.currentNavigation()?.extras?.state?.['error']);
   }
 }
