@@ -9,10 +9,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LocalStorage } from '../../core/services/local-storage';
 import { themes } from '../theme';
 import { TitleCasePipe } from '@angular/common';
+import { HasRole } from '../../core/directives/has-role';
 
 @Component({
   selector: 'dating-nav',
-  imports: [Login, UserProfile, RouterModule, TitleCasePipe],
+  imports: [Login, UserProfile, RouterModule, TitleCasePipe, HasRole],
   templateUrl: './nav.html',
   styleUrl: './nav.css',
 })

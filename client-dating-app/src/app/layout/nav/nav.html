@@ -23,27 +23,37 @@
       </a>
     </div>
     <nav class="flex gap-3 my-2 uppercase text-lg text-white">
-      <a
-        class="hover:text-orange-400"
-        routerLink="/member-list"
-        routerLinkActive="text-accent"
-        [routerLinkActiveOptions]="{ exact: true }"
-        >Matches</a
-      >
-      <a
-        class="hover:text-orange-400"
-        routerLink="lists"
-        routerLinkActive="text-accent"
-        [routerLinkActiveOptions]="{ exact: true }"
-        >Lists</a
-      >
-      <a
-        class="hover:text-orange-400"
-        routerLink="messages"
-        routerLinkActive="text-accent"
-        [routerLinkActiveOptions]="{ exact: true }"
-        >Messages</a
-      >
+      @if (isLoggedIn()) {
+        <a
+          class="hover:text-orange-400"
+          routerLink="/member-list"
+          routerLinkActive="text-accent"
+          [routerLinkActiveOptions]="{ exact: true }"
+          >Matches</a
+        >
+        <a
+          class="hover:text-orange-400"
+          routerLink="lists"
+          routerLinkActive="text-accent"
+          [routerLinkActiveOptions]="{ exact: true }"
+          >Lists</a
+        >
+        <a
+          class="hover:text-orange-400"
+          routerLink="messages"
+          routerLinkActive="text-accent"
+          [routerLinkActiveOptions]="{ exact: true }"
+          >Messages</a
+        >
+        <a
+          class="hover:text-orange-400"
+          routerLink="admin"
+          routerLinkActive="text-accent"
+          *datingHasRole="['Admin', 'Moderator']"
+          [routerLinkActiveOptions]="{ exact: true }"
+          >Admin</a
+        >
+      }
     </nav>
     <div class="flex align-middle ml-auto gap-3">
       <div class="dropdown mr-5 dropdown-end">
@@ -74,7 +84,7 @@
         >
           @for (theme of themes; track $index) {
             <li (click)="handleSelectTheme(theme)">
-              <a>{{ theme | titlecase}}</a>
+              <a>{{ theme | titlecase }}</a>
             </li>
           }
         </ul>

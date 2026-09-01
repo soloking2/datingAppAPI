@@ -4,6 +4,8 @@ export interface User {
   email: string;
   token: string;
   imageUrl: string;
+  roles?: string[];
+  role?: string[];
 }
 
 export interface IRegister {

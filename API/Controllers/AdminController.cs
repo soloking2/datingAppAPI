@@ -9,7 +9,7 @@ public class AdminController(UserManager<AppUser> userManager) : BaseController
     [HttpGet("users-with-roles")]
     public async Task<ActionResult> GetUsersWithRoles()
     {
-        var users = await userManager.Users.ToListAsync();
+        var users = await userManager.Users.OrderBy(x => x.Email).ToListAsync();
         var userListWithRoles = new List<object>();
 
         foreach (var user in users)

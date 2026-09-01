@@ -11,7 +11,7 @@
       </button>
     }
   </div>
-  @if (metaData()!.totalCount > 0) {
+  @if (metaData()?.totalCount > 0) {
     <dating-paginator
       [pageNumber]="metaData()!.currentPage"
       [pageSize]="metaData()!.pageSize"

@@ -3,7 +3,8 @@
   class="card relative cursor-pointer transition-all duration-300 ease-in-out transform hover:-translate-y-2"
   [routerLink]="['/member-list', mem.id]"
 >
-  <img [src]="mem.imageUrl || ''" alt="{{ mem.displayName }}" class="rounded-lg" />
+
+  <img [src]="mem.imageUrl || '/user.png'" alt="{{ mem.displayName }}" class="rounded-lg" />
   <button
     class="absolute top-1 right-1 z-45 btn btn-ghost btn-circle"
     (click)="onHandleLike(mem.id, $event)"

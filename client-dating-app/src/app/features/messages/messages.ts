@@ -19,7 +19,7 @@ export class Messages implements OnInit {
 
 
   protected readonly messages = signal<IMessage[]>([]);
-  protected readonly metaData = signal<Metadata | null>(null)
+  protected readonly metaData = signal<Metadata>({} as Metadata)
   public tabs = signal<Tab[]>([
     {
       label: 'Inbox',

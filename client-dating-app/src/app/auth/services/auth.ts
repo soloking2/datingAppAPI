@@ -43,8 +43,16 @@ export class Auth {
   }
 
   public setCurrentUser(user: User) {
+   user.roles = this.getRolesFromToken(user);
     localStorage.setItem('user', JSON.stringify(user));
     this.likesService.likeIds();
     this.currentUser.set(user);
+  }
+
+  private getRolesFromToken(user: User): string[] {
+    const token = user.token.split(".")[1];
+    const encodedRole = atob(token);
+    const jsonPayload = JSON.parse(encodedRole).role;
+    return Array.isArray(jsonPayload) ? jsonPayload : [jsonPayload];
   }
 }
