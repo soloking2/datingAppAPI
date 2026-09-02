@@ -1,11 +1,4 @@
-import {
-  Directive,
-  inject,
-  TemplateRef,
-  ViewContainerRef,
-  effect,
-  input,
-} from '@angular/core';
+import { Directive, inject, TemplateRef, ViewContainerRef, effect, input } from '@angular/core';
 import { Auth } from '../../auth/services/auth';
 
 @Directive({
@@ -22,10 +15,9 @@ export class HasRole {
   //Used effect because the currentUser is a signal and we want to react to changes in the signal
   datingEffect = effect(() => {
     const userRoles = this.authService.currentUser();
+    this.viewContainerRef.clear();
     if (userRoles?.roles?.some((role) => this.datingHasRole().includes(role))) {
       this.viewContainerRef.createEmbeddedView(this.templateRef);
-    } else {
-      this.viewContainerRef.clear();
     }
   });
 }

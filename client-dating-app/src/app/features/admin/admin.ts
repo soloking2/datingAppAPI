@@ -12,22 +12,21 @@ import { PhotoManagement } from "./photo-management/photo-management";
 })
 export class Admin {
   private readonly authService = inject(Auth);
-  protected hasAdminRole = computed(() => this.authService.currentUser()?.roles?.includes('Admin'))
+  protected hasAdminRole = computed(() => this.authService.currentUser()?.roles?.includes('Admin'));
   tabs = signal<Tab[]>([
-    {
-      label: 'User Management',
-      value: 'roles',
-    },
     {
       label: 'Photo Moderation',
       value: 'photos',
     },
+    {
+      label: 'User Management',
+      value: 'roles',
+    },
   ]);
-  activeTab = signal<string>("roles");
+  activeTab = signal<string>('roles');
 
   setActiveTab(tab: string) {
-    if(this.activeTab() === tab) return;
-    this.activeTab.set(tab)
+    if (this.activeTab() === tab) return;
+    this.activeTab.set(tab);
   }
-
 }

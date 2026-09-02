@@ -32,6 +32,7 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
   if (result.Succeeded)
   {
    await userManager.AddToRoleAsync(user, "Member");
+   await SetRefreshTokenCookie(user);
    return Ok(user.ToDto(tokenService));
   }
   else
@@ -55,6 +56,7 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
 
   var result = await userManager.CheckPasswordAsync(user, loginDto.Password);
   if (!result) return Unauthorized("Invalid email or password");
+  await SetRefreshTokenCookie(user);
   return await user.ToDto(tokenService);
 
 
@@ -72,7 +74,37 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
   }).ToListAsync();
   return Ok(users);
  }
+
+ [HttpPost("refresh-token")]
+ public async Task<ActionResult<UserDto>> RefreshToken()
+ {
+  var refreshToken = Request.Cookies["refreshToken"];
+  if(refreshToken == null) return NoContent();
+
+  var user = await userManager.Users
+   .FirstOrDefaultAsync(x => x.RefreshToken == refreshToken
+                             && x.RefreshTokenExpiry > DateTime.UtcNow);
+  if (user == null) return Unauthorized();
+
+  await SetRefreshTokenCookie(user);
+  return await user.ToDto(tokenService);
+ }
  
- 
- 
+ private async Task SetRefreshTokenCookie(AppUser user)
+ {
+  var refreshToken = tokenService.GenerateRefreshToken();
+  user.RefreshToken = refreshToken;
+  user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7);
+  await userManager.UpdateAsync(user);
+
+  var cookieOptions = new CookieOptions
+  {
+   HttpOnly = true,
+   Secure = true,
+   SameSite = SameSiteMode.Strict,
+   Expires = DateTime.UtcNow.AddDays(7),
+  };
+  Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
+ }
 }
+
