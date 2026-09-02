@@ -6,12 +6,15 @@ import { LocalStorage } from '../../core/services/local-storage';
 import { environment } from '../../../environments/environment';
 import { LikesService } from '../../features/members/services/likes-service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { PresenceService } from '../../core/services/presence-service';
+import { HubConnectionState } from '@microsoft/signalr';
 
 @Service()
 export class Auth implements OnDestroy {
   private readonly http = inject(HttpClient);
   private readonly storageService = inject(LocalStorage);
   private readonly likesService = inject(LikesService);
+  private readonly presenceService = inject(PresenceService);
   private readonly baseUrl = `${environment.baseUrl}/account`;
   private readonly destroy$ = inject(DestroyRef);
   private intervalId!: number;
@@ -52,6 +55,7 @@ export class Auth implements OnDestroy {
     this.storageService.removeItem('filters');
     this.likesService.clearLikeIds();
     this.currentUser.set(null);
+    this.presenceService.stopHubConnection();
   }
 
   public startTokenRefreshTimer() {
@@ -83,6 +87,10 @@ export class Auth implements OnDestroy {
     user.roles = this.getRolesFromToken(user);
     this.likesService.likeIds();
     this.currentUser.set(user);
+
+    if (this.presenceService.hubConnection?.state !== HubConnectionState.Connected) {
+      this.presenceService.createHubConnection(user);
+    }
   }
 
   public refreshToken() {
@@ -96,7 +104,6 @@ export class Auth implements OnDestroy {
   }
 
   private getRolesFromToken(user: User): string[] {
-    console.log(user.token);
     const token = user.token.split('.')[1];
     const encodedRole = atob(token);
     const jsonPayload = JSON.parse(encodedRole).role;

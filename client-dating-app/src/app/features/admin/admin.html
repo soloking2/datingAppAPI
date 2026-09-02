@@ -14,8 +14,8 @@
     </div>
   </div>
 </div>
-@if (activeTab() === 'roles') {
-  <dating-user-management />
-} @else if (activeTab() === 'photos') {
+@if (activeTab() === 'photos') {
   <dating-photo-management />
+} @else if (activeTab() === 'roles') {
+  <dating-user-management />
 }

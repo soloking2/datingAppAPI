@@ -18,6 +18,7 @@ import { FilterModal } from '../../../shared/components/filter-modal/filter-moda
 import { LocalStorage } from '../../../core/services/local-storage';
 import { LikesService } from '../services/likes-service';
 import { ToastService } from '../../../core/services/toast-service';
+import { PresenceService } from '../../../core/services/presence-service';
 
 @Component({
   selector: 'dating-member-list',
@@ -29,6 +30,7 @@ export class MemberList implements OnInit {
   @ViewChild('filterModal') modalRef!: FilterModal;
   private readonly memberService = inject(MemberService);
   protected readonly likesService = inject(LikesService);
+  protected readonly presenceService = inject(PresenceService);
   private readonly toastService = inject(ToastService);
   private readonly destroy$ = inject(DestroyRef);
   private readonly storageService = inject(LocalStorage);

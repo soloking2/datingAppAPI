@@ -13,6 +13,7 @@ import { AgeOldPipe } from '../../../core/pipes/age-old-pipe';
 import { filter } from 'rxjs';
 import { Auth } from '../../../auth/services/auth';
 import { Location } from '@angular/common';
+import { PresenceService } from '../../../core/services/presence-service';
 
 @Component({
   selector: 'dating-member-details',
@@ -26,15 +27,18 @@ export class MemberDetails implements OnInit {
   private readonly authService = inject(Auth);
   private readonly paramMap = toSignal(this.route.paramMap);
   private readonly destroy$ = inject(DestroyRef);
+  private readonly presenceService = inject(PresenceService);
+
+
   protected readonly memberService = inject(MemberService);
   protected readonly location = inject(Location);
-
   protected member = computed(() => this.memberService.member());
   protected title = signal<string | undefined>('');
   protected isCurrentUser = computed(() => {
     return this.authService.currentUser()?.id === this.paramMap()?.get('id');
   });
   protected editMode = computed(() => this.memberService.editProfile());
+  protected isOnline = computed(() => this.presenceService.onlineUsers().includes(this.member()?.id as string));
 
   ngOnInit(): void {
     this.title.set(this.route.firstChild?.snapshot?.title);

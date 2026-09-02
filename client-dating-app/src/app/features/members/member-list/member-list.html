@@ -3,7 +3,7 @@
     <div class="flex gap-3 items-center">
       <button class="btn btn-primary" (click)="openModal()">Select Filters</button>
       <button class="btn btn-neutral" (click)="onResetFilter()">Reset Filters</button>
-      <div class="flex p-3 border border-primary rounded-lg text-black">
+      <div class="flex p-3 border border-primary rounded-lg">
         {{generateMessage()}}
       </div>
     </div>
@@ -20,6 +20,7 @@
   <div class="grid grid-cols-5 gap-3">
     @for (member of memberList()?.items; track $index) {
       <dating-member-card [member]="member" [likedIds]="likedIds()"
+      [onlineUsers]="presenceService.onlineUsers()"
       (likeOutput)="handleLike($event)"
       />
     }

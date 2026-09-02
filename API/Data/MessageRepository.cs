@@ -53,4 +53,33 @@ public class MessageRepository(ApiDbContext dbContext) : IMessageRepository
     {
         return await dbContext.SaveChangesAsync() > 0;
     }
+
+    public void AddGroup(Group group)
+    {
+        dbContext.Groups.Add(group);
+    }
+
+    public async Task RemoveConnection(string connectionId)
+    {
+        await dbContext.Connections.
+            Where(x => x.ConnectionId == connectionId).ExecuteDeleteAsync();
+    }
+
+    public async Task<Connection?> GetConnection(string connectionId)
+    {
+       return await dbContext.Connections.FindAsync(connectionId);
+    }
+
+    public async Task<Group?> GetMessageGroup(string groupName)
+    {
+        return await dbContext.Groups.Include(x => x.Connections)
+            .FirstOrDefaultAsync(x => x.Name == groupName);
+    }
+
+    public async Task<Group?> GetGroupForConnection(string connectionId)
+    {
+        return await dbContext.Groups.Include(x => x.Connections)
+            .Where(x => x.Connections.Any(c => c.ConnectionId == connectionId))
+            .FirstOrDefaultAsync();
+    }
 }

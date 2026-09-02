@@ -23,7 +23,7 @@ export class Admin {
       value: 'roles',
     },
   ]);
-  activeTab = signal<string>('roles');
+  activeTab = signal<string>('photos');
 
   setActiveTab(tab: string) {
     if (this.activeTab() === tab) return;

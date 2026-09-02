@@ -8,8 +8,11 @@
       />
       <div class="card-body">
         <div class="flex flex-col items-center">
-          <div class="flex text-2xl text-primary">
+          <div class="flex text-2xl text-primary items-center gap-x-2">
             {{ member.displayName }}, {{ member.dateOfBirth | ageOld }}
+            @if (isOnline()) {
+              <span class="status status-success status-xl"></span>
+            }
           </div>
           <div class="text-sm">{{ member.city }}, {{ member.country }}</div>
         </div>

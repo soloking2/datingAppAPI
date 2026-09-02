@@ -13,7 +13,9 @@ import { RouterLink } from '@angular/router';
 export class MemberCard {
   member = input.required<IMember>();
   likedIds = input<string[]>([]);
+  onlineUsers = input<string[]>([]);
   isLiked = computed(() => this.likedIds().includes(this.member().id));
+  isOnline = computed(() => this.onlineUsers().includes(this.member().id));
 
   likeOutput = output<{targetMemberId: string, hasLiked: Signal<boolean>}>();
 

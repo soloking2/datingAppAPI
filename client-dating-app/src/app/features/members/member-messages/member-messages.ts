@@ -5,17 +5,18 @@ import {
   effect,
   ElementRef,
   inject,
+  OnDestroy,
   OnInit,
-  signal,
   ViewChild,
 } from '@angular/core';
 import { MemberService } from '../services/member-service';
 import { MessageService } from '../../messages/services/message-service';
-import { IMessage } from '../../../core/interfaces/message';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
 import { TimeAgoPipe } from '../../../core/pipes/time-ago-pipe';
 import { FormsModule } from '@angular/forms';
+import { PresenceService } from '../../../core/services/presence-service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'dating-member-messages',
@@ -23,69 +24,52 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './member-messages.html',
   styleUrl: './member-messages.css',
 })
-export class MemberMessages implements OnInit {
+export class MemberMessages implements OnInit, OnDestroy {
   @ViewChild('messageEndRef') messageRef!: ElementRef;
   private readonly messageService = inject(MessageService);
   private readonly memberService = inject(MemberService);
   private readonly destroy$ = inject(DestroyRef);
+  private readonly route = inject(ActivatedRoute);
 
-  protected readonly messages = signal<IMessage[]>([]);
+  protected readonly presenceService = inject(PresenceService);
+  protected readonly messages = computed(() => this.messageService.messageThread());
   protected readonly memberId = computed(() => this.memberService.member()?.id as string);
-  protected messageContent = '';
+  isOnline = computed(() => this.presenceService.onlineUsers().includes(this.memberId()));
+  public messageContent = "";
 
   constructor() {
     effect(() => {
-      if(this.messages().length > 0) {
-        this.scrollToBottom()
+      if (this.messages().length > 0) {
+        this.scrollToBottom();
       }
-    })
+    });
   }
 
   ngOnInit(): void {
-    this.loadMessages(this.memberId());
-  }
-
-  loadMessages(memberId: string) {
-    this.messageService
-      .getMessageThread(memberId)
-      .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          this.messages.set(
-            response.map((message) => ({
-              ...message,
-              currentUserSender: message.senderId !== this.memberId(),
-            })),
-          );
-        },
-
-      });
+    this.route.parent?.paramMap.pipe(takeUntilDestroyed(this.destroy$)).subscribe((params) => {
+      const otherUserId = params.get('id');
+      if (!otherUserId) throw new Error('Cannot connect to hub');
+      this.messageService.createConnection(otherUserId);
+    });
   }
 
   sendMessage() {
     if (!this.messageContent && !this.memberId()) return;
-    this.messageService
-      .sendMessage(this.memberId(), this.messageContent)
-      .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          this.messages.update((prev) => {
-            const currentMessage = { ...response, currentUserSender: true };
-            return [...prev, currentMessage];
-          });
-          this.messageContent = '';
-        },
-      });
+    this.messageService.sendMessage(this.memberId(), this.messageContent)
+    .then(() => {
+      this.messageContent = "";
+    });
   }
-
-
 
   scrollToBottom() {
     setTimeout(() => {
       if (this.messageRef) {
         this.messageRef.nativeElement.scrollIntoView({ behavior: 'smooth' });
       }
+    });
+  }
 
-    })
+  ngOnDestroy(): void {
+    this.messageService.stopHubConnection();
   }
 }
