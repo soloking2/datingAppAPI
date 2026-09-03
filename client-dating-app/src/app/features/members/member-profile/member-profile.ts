@@ -16,7 +16,7 @@ import { MemberService } from '../services/member-service';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ToastService } from '../../../core/services/toast-service';
 import { Auth } from '../../../auth/services/auth';
-import { TimeAgoPipe } from "../../../core/pipes/time-ago-pipe";
+import { TimeAgoPipe } from '../../../core/pipes/time-ago-pipe';
 
 @Component({
   selector: 'dating-member-profile',
@@ -45,7 +45,11 @@ export class MemberProfile implements OnDestroy, OnInit {
   protected editableMember!: IEditMember;
 
   ngOnInit(): void {
-    this.editableMember = this.prefillEditableMember(this.member() as IMember);
+    this.route.parent?.data.subscribe((data) => {
+      if (data?.['member']) {
+        this.editableMember = { ...this.prefillEditableMember(data?.['member'] as IMember) };
+      }
+    });
   }
 
   public prefillEditableMember(member: IMember): IEditMember {
@@ -71,7 +75,7 @@ export class MemberProfile implements OnDestroy, OnInit {
               ...currentUser,
               name: updatedMember.displayName,
             };
-            this.authService.currentUser.update(prev => updatedUser);
+            this.authService.currentUser.update((prev) => updatedUser);
             this.authService.setCurrentUser(updatedUser);
           }
 

@@ -17,7 +17,7 @@
       />
     }
   </div>
-  <div class="grid grid-cols-5 gap-3">
+  <div class="grid grid-cols-5 gap-3 mt-3">
     @for (member of memberList()?.items; track $index) {
       <dating-member-card [member]="member" [likedIds]="likedIds()"
       [onlineUsers]="presenceService.onlineUsers()"

@@ -2,11 +2,10 @@ import { Component, computed, DestroyRef, inject, OnInit, Signal, signal } from 
 import { LikesService } from '../members/services/likes-service';
 import { IMember } from '../../core/interfaces/member';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MemberCard } from "../members/components/member-card/member-card";
+import { MemberCard } from '../members/components/member-card/member-card';
 import { ToastService } from '../../core/services/toast-service';
 import { IQuery, Metadata, Tab } from '../../core/interfaces/pagination';
-import { Paginator } from "../../shared/paginator/paginator";
-
+import { Paginator } from '../../shared/paginator/paginator';
 
 @Component({
   selector: 'dating-lists',
@@ -15,12 +14,12 @@ import { Paginator } from "../../shared/paginator/paginator";
   styleUrl: './lists.css',
 })
 export class Lists implements OnInit {
-  private readonly likesService = inject(LikesService);
   private readonly destroy$ = inject(DestroyRef);
   private readonly toastService = inject(ToastService);
+  private readonly likesService = inject(LikesService);
 
   protected members = signal<IMember[]>([]);
-  protected metaData = signal<Metadata | null>(null)
+  protected metaData = signal<Metadata | null>(null);
   protected predicate = signal<string>('liked');
   protected likedIds = computed(() => this.likesService.likeIds());
 
@@ -81,7 +80,7 @@ export class Lists implements OnInit {
   }
 
   onPageChange($event: IQuery) {
-      const pagination = { ...$event };
-      this.loadLikedMembers(this.predicate(), pagination);
-    }
+    const pagination = { ...$event };
+    this.loadLikedMembers(this.predicate(), pagination);
+  }
 }

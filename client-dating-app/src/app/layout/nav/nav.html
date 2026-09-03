@@ -92,7 +92,9 @@
       @if (isLoggedIn()) {
         <dating-user-profile [user]="user()!" (logOut)="logout($event)" />
       } @else {
-        <dating-login (userOutput)="handleUserLoggedIn($event)" />
+        <dating-login (userOutput)="handleUserLoggedIn($event)"
+        [loading]="isLoading()"
+        />
       }
     </div>
   </div>

@@ -1,4 +1,4 @@
-import { Component, output } from '@angular/core';
+import { Component, model, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -8,7 +8,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './login.css',
 })
 export class Login {
-
+  loading = model(false);
   protected creds: { email: string; password: string } = {
     email: '',
     password: '',

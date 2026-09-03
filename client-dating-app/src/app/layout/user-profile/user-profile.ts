@@ -16,4 +16,9 @@ export class UserProfile {
   protected logout() {
     this.logOut.emit(true);
   }
+
+  handleSelectUserItem() {
+    const elem = document.activeElement as HTMLDivElement;
+    if (elem) elem.blur();
+  }
 }

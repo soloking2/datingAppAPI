@@ -17,10 +17,10 @@ export class MemberCard {
   isLiked = computed(() => this.likedIds().includes(this.member().id));
   isOnline = computed(() => this.onlineUsers().includes(this.member().id));
 
-  likeOutput = output<{targetMemberId: string, hasLiked: Signal<boolean>}>();
+  likeOutput = output<{ targetMemberId: string; hasLiked: Signal<boolean> }>();
 
   onHandleLike(targetMemberId: string, event: Event) {
     event.stopPropagation();
-    this.likeOutput.emit({targetMemberId, hasLiked: this.isLiked});
+    this.likeOutput.emit({ targetMemberId, hasLiked: this.isLiked });
   }
 }

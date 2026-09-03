@@ -36,7 +36,7 @@ export class MemberList implements OnInit {
   private readonly storageService = inject(LocalStorage);
   pagination: IQuery = {
     pageNumber: 1,
-    pageSize: 5,
+    pageSize: 10,
     minAge: 18,
     maxAge: 100,
   };

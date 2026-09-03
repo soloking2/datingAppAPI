@@ -28,12 +28,14 @@ export class Nav implements OnInit {
   protected user = computed<User | null>(() => this.authService.currentUser());
   protected selectedtheme = signal<string>(this.storageService.getItem<string>('theme') || 'light');
   protected themes = themes;
+  protected isLoading = signal(false);
 
   ngOnInit(): void {
     document.documentElement.dataset['theme'] = this.selectedtheme();
   }
 
   protected handleUserLoggedIn(user: { email: string; password: string }) {
+    this.isLoading.set(true);
     this.authService
       .login(user)
       .pipe(takeUntilDestroyed(this.destory$))
@@ -42,10 +44,12 @@ export class Nav implements OnInit {
           this.authService.currentUser.set(response as User);
           this.toastService.success('User has successfully logged in');
           this.router.navigate(['/member-list']);
+          this.isLoading.set(false);
         },
         error: (error) => {
           console.log('Login failed', error.error);
           this.toastService.error(error.error);
+          this.isLoading.set(false);
         },
       });
   }

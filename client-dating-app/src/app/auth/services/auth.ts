@@ -52,10 +52,22 @@ export class Auth implements OnDestroy {
   }
 
   public logout() {
-    this.storageService.removeItem('filters');
-    this.likesService.clearLikeIds();
-    this.currentUser.set(null);
-    this.presenceService.stopHubConnection();
+    this.http
+      .post(
+        `${this.baseUrl}/logout`,
+        {},
+        {
+          withCredentials: true,
+        },
+      )
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe(() => {
+        console.log('got here');
+        this.storageService.removeItem('filters');
+        this.likesService.clearLikeIds();
+        this.presenceService.stopHubConnection();
+        this.currentUser.set(null);
+      });
   }
 
   public startTokenRefreshTimer() {
@@ -84,12 +96,13 @@ export class Auth implements OnDestroy {
   }
 
   public setCurrentUser(user: User) {
-    user.roles = this.getRolesFromToken(user);
-    this.likesService.likeIds();
-    this.currentUser.set(user);
+    if (user) {
+      user.roles = this.getRolesFromToken(user);
+      this.currentUser.set(user);
 
-    if (this.presenceService.hubConnection?.state !== HubConnectionState.Connected) {
-      this.presenceService.createHubConnection(user);
+      if (this.presenceService.hubConnection?.state !== HubConnectionState.Connected) {
+        this.presenceService.createHubConnection(user);
+      }
     }
   }
 
