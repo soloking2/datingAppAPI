@@ -3,9 +3,10 @@ import { Metadata, Tab } from '../../core/interfaces/pagination';
 import { MessageService } from './services/message-service';
 import { IMessage, IMessageQuery } from '../../core/interfaces/message';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Paginator } from "../../shared/paginator/paginator";
-import { RouterLink } from "@angular/router";
+import { Paginator } from '../../shared/paginator/paginator';
+import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { ConfirmDialogService } from '../../core/services/confirm-dialog-service';
 
 @Component({
   selector: 'dating-messages',
@@ -15,11 +16,11 @@ import { DatePipe } from '@angular/common';
 })
 export class Messages implements OnInit {
   private readonly messageService = inject(MessageService);
+  private readonly dialogService = inject(ConfirmDialogService);
   private readonly destroy$ = inject(DestroyRef);
 
-
   protected readonly messages = signal<IMessage[]>([]);
-  protected readonly metaData = signal<Metadata>({} as Metadata)
+  protected readonly metaData = signal<Metadata>({} as Metadata);
   public tabs = signal<Tab[]>([
     {
       label: 'Inbox',
@@ -29,34 +30,34 @@ export class Messages implements OnInit {
       label: 'Outbox',
       value: 'Outbox',
     },
-
   ]);
 
   protected pagination = signal<IMessageQuery>({
     pageNumber: 1,
-    pageSize: 10
-  })
-  protected container = signal("Inbox");
-  protected isInbox = computed(() => this.container() === "Inbox");
+    pageSize: 10,
+  });
+  protected container = signal('Inbox');
+  protected isInbox = computed(() => this.container() === 'Inbox');
 
   ngOnInit(): void {
-    this.loadMessages(this.pagination())
+    this.loadMessages(this.pagination());
   }
 
   private loadMessages(query: IMessageQuery) {
-    this.messageService.getMessages(query).pipe(
-      takeUntilDestroyed(this.destroy$)
-    ).subscribe(response => {
-      this.messages.set(response.items);
-      this.metaData.set(response.metadata);
-    })
+    this.messageService
+      .getMessages(query)
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe((response) => {
+        this.messages.set(response.items);
+        this.metaData.set(response.metadata);
+      });
   }
 
   setContainer(container: string) {
-    if(this.container() !== container) {
+    if (this.container() !== container) {
       this.container.set(container);
-      this.pagination.update((prev) => ({...prev, pageNumber: 1, container: this.container()}))
-      this.loadMessages(this.pagination())
+      this.pagination.update((prev) => ({ ...prev, pageNumber: 1, container: this.container() }));
+      this.loadMessages(this.pagination());
     }
   }
 
@@ -65,14 +66,22 @@ export class Messages implements OnInit {
     this.loadMessages(this.pagination());
   }
 
-  deleteMessage(event: Event, id: string) {
+  async onDelete(event: Event, id: string) {
     event.stopPropagation();
-    this.messageService.deleteMessage(id).pipe(
-      takeUntilDestroyed(this.destroy$)
-    ).subscribe({
-      next: () => {
-        this.loadMessages(this.pagination())
-      }
-    })
+    const ok = await this.dialogService.open('Are you sure you want to delete this message?');
+    if (ok) {
+      this.deleteMessage(id);
+    }
+  }
+
+  deleteMessage(id: string) {
+    this.messageService
+      .deleteMessage(id)
+      .pipe(takeUntilDestroyed(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.loadMessages(this.pagination());
+        },
+      });
   }
 }

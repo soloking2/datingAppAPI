@@ -51,9 +51,4 @@ public class LikesRepository(ApiDbContext dbContext) : ILikesRepository
     {
         dbContext.Likes.Add(like);
     }
-
-    public async Task<bool> SaveAllChangesAsync()
-    {
-        return await dbContext.SaveChangesAsync() > 0;
-    }
 }

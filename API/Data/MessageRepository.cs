@@ -48,11 +48,7 @@ public class MessageRepository(ApiDbContext dbContext) : IMessageRepository
             .Select(MessageExtensions.ToDtoProjection())
             .ToListAsync();
     }
-
-    public async Task<bool> SaveAllAsync()
-    {
-        return await dbContext.SaveChangesAsync() > 0;
-    }
+    
 
     public void AddGroup(Group group)
     {

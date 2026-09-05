@@ -8,11 +8,7 @@ public class MemberRepository(ApiDbContext dbContext) : IMemberRepository
     {
         dbContext.Entry(member).State = EntityState.Modified;
     }
-
-    public async Task<bool> SaveAllAsync()
-    {
-        return await dbContext.SaveChangesAsync() > 0;
-    }
+    
 
     public async Task<PaginatedResult<Member>> GetMemberAsync(MemberParams memberParams)
     {
